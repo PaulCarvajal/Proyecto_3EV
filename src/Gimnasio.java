@@ -94,5 +94,10 @@ public class Gimnasio {
         }
         return clases;
     }
+    
+    
+    public void afdawq(){
+        System.out.println("hola maikol");
+    }
 
 }
