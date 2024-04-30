@@ -93,6 +93,10 @@ class Sala {
         }
         return flag;
     }
+    
+    public static void asdafd(){
+        System.out.println("dos");
+    }
 
     
 }
