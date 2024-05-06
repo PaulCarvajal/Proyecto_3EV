@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,7 +12,6 @@ import java.util.Scanner;
 class Sala {
 
     private int id;
-//    private int capacidad;
     private ArrayList<Clase> clases;
     Scanner sc = new Scanner(System.in);
 
@@ -43,10 +41,10 @@ class Sala {
     }
 
     public ArrayList<Horario> seleccionarClase(int idClase) {
-        ArrayList<Horario> horario_aux = null;
+        ArrayList<Horario> horario_aux = new ArrayList<>();
         for (Clase it : clases) {
             if (it.getId() == idClase) {
-                horario_aux = it.getHorario();
+                horario_aux = it.horarioDisponible();
             }
         }
         return horario_aux;
@@ -58,41 +56,5 @@ class Sala {
         }
     }
 
-    public void eliminarReserva(Cliente entrada) {
-        boolean reserva = false;//controlar si estoy inscrito en ALGUNA clase
-        boolean existe = false;
-        for (Clase it : clases) {
-            if (it.comprobarClienteInscrito(entrada)) {//indica las clases en las que esta inscrito
-                System.out.println(it.claseToCsv());
-                reserva = true;
-            }
-        }
-        if (reserva) {
-            System.out.println("Indica el id de la reserva a cancelar: ");
-            int aux = Integer.valueOf(sc.nextLine());
-            for (int i = 0; i < clases.size(); i++) {
-                if (clases.get(i).getId() == aux) {
-                    clases.get(i).getInscritos().remove(entrada);
-                    System.out.println("Reserva cancelada: " + clases.get(i).getNombre());
-                    i--;
-                    break;
-                }
-            }
-        } else {
-            System.out.println("No estas matriculado en ninguna clase");
-        }
-
-    }
-
-    public boolean buscarMiClase(Cliente entrada) {
-        boolean flag = false;
-        for (Clase clase : clases) {
-            if (clase.buscarMiHorario(entrada)) {
-                flag = true;
-            }
-        }
-        return flag;
-    }
     
-  
 }
