@@ -86,5 +86,11 @@ public class Horario {
         return "ID: " + id + "  FECHA: " + dia + " " + hora + ":00";
     }
     
+    public boolean hueco(int capacidad){
+        if(inscritos.size()<capacidad){
+            return true;
+        }
+        return false;
+    }   
    
 }

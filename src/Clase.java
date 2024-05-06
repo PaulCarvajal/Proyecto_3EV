@@ -13,15 +13,21 @@ class Clase {
 
     private int id;
     private String nombre;
+    private int capacidad;
     private int duracion;
     private ArrayList<Horario> horario = new ArrayList<>();
 
-    public Clase(int id, String nombre, int duracion) {
-        this.id = id;
+    public Clase(int id, int capacidad, String nombre, int duracion) {
+        this.id = id;        
+        this.capacidad = capacidad;
         this.nombre = nombre;
         this.duracion = duracion;
 //        this.inscritos = new ArrayList<>();
         //si no inicializo el array me da una excepcion nullpointer al intentar añadir clientes
+    }
+
+    public int getCapacidad() {
+        return capacidad;
     }
 
     public int getId() {
@@ -62,27 +68,33 @@ class Clase {
 
     public void mostrarHorario(){        
         for (Horario it : horario) {
-            System.out.println(it.horarioToCsv());
+            System.out.println(it.horarioToString());
         }
     }
+
     
-    public void seleccionarHorario(int idHorario){        
-        for (Horario it : horario) {
-            if(idHorario==it.getId()){
-                it.anadirCliente(entrada);
-            }
-        }
-    }
-    
-    public boolean buscarMiHorario(Cliente entrada) {
-        boolean flag = false;
+    public ArrayList<Horario> buscarMiHorario(Cliente entrada) {
+        ArrayList <Horario> misHorarios = new ArrayList<>();
         for (Horario it : horario) {
             if (it.comprobarClienteInscrito(entrada)) {
-                System.out.println(nombre);
-                flag = true;
-                System.out.println(it.horarioToCsv());
+                misHorarios.add(it);
             }
         }
-       return flag;
+       return misHorarios;
     }
+    
+    public ArrayList<Horario> horarioDisponible(){
+        ArrayList<Horario> salida = new ArrayList<>();
+        for (Horario it : horario) {
+            if(it.hueco(capacidad)){
+                salida.add(it);
+            }
+        }
+        return salida;
+    }
+    
+    public String claseToString(){
+        return nombre + "(ID: " + id + ")" ;
+    }
+
 }
