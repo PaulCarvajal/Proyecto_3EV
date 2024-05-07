@@ -96,5 +96,4 @@ class Clase {
     public String claseToString(){
         return nombre + "(ID: " + id + ")" ;
     }
-
 }

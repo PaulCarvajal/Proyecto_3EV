@@ -215,6 +215,63 @@ public class main {
 
     }
 
+    public static void eliminarReserva2(Cliente entrada) {
+        ArrayList<Clase> misClases = misReservas(entrada); //mis reservas devuelve un AL con las clases en las que hay al menos 1 reserva
+        ArrayList<Horario> misHorarios = new ArrayList<>(); //creo un AL para guardar luego los horarios en los que estoy inscrito de la clase que indico
+        if (!misClases.isEmpty()) {//solo realizo esto si estoy matriculado en ALGUNA clase=>si no no me puede desmatricular de nada
+            int idClase = -77;
+            int idHorario = -88;
+            boolean horarioValido = false;//variable para controlar si el horario indicado existe/estoy inscrito
+            do {
+                System.out.println("Indica el id de la clase a cancelar: ");
+                idClase = Integer.valueOf(sc.nextLine());
+                for (Clase clase : misClases) {
+                    if (clase.getId() == idClase) {
+                        misHorarios = clase.buscarMiHorario(entrada);
+                        do {
+                            System.out.println("Indica el id de la hora a cancelar: ");
+                            idHorario = Integer.valueOf(sc.nextLine());
+
+                            for (int i = 0; i < misHorarios.size(); i++) {
+                                if (misHorarios.get(i).getId() == idHorario) {
+                                    horarioValido = true;
+                                    misHorarios.get(i).getInscritos().remove(entrada);
+                                    System.out.println("Reserva cancelada: " + clase.getNombre());
+                                    i--;
+                                    break;
+                                }
+                            }
+                            if (!horarioValido) {
+                                System.out.println("Horario no válido...");
+                            }
+                        } while (!horarioValido);
+                    }
+                }
+                if (idHorario == -88) {
+                    System.out.println("ID no válido...");
+                }
+            } while (idHorario == -88);
+        }
+    }
+
+    public static ArrayList<Clase> misReservas2(Cliente entrada) {
+        ArrayList<Clase> misClases = new ArrayList<>();
+        for (Clase clase : g1.recorrerClases()) { //AL de todas las clases existentes en el gimnasio
+            if (!clase.buscarMiHorario(entrada).isEmpty()) {
+                misClases.add(clase);
+                System.out.println(clase.claseToString());
+                for (Horario horario : clase.buscarMiHorario(entrada)) {
+                    System.out.println(horario.horarioToString());
+                }
+            }
+        }
+        if (misClases.isEmpty()) {
+            System.out.println("No estas matriculado en ninguna clase");
+        }
+        return misClases;
+
+    }
+
     public static void eliminarReserva(Cliente entrada) {
         ArrayList<Clase> misClases = misReservas(entrada); //mis reservas devuelve un AL con las clases en las que hay al menos 1 reserva
         ArrayList<Horario> misHorarios = new ArrayList<>(); //creo un AL para guardar luego los horarios en los que estoy inscrito de la clase que indico
