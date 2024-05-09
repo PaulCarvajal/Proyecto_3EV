@@ -41,7 +41,6 @@ public class Gimnasio {
     public int[] getHorasApertura() {
         return horasApertura;
     }
-    
 
     public void setId(int id) {
         this.id = id;
@@ -66,10 +65,11 @@ public class Gimnasio {
         }
     }
 
-    public void mostrarClases() {
+    public void mostrarClases() {//ordenar con sort
+        ArrayList<Clase> clases = recorrerClases();
         System.out.println("Mostrando clases...");
-        for (Sala sala : salas) {
-            sala.mostrarClases();
+        for (Clase clase : clases) {
+            System.out.println(clase.claseToString());
         }
     }
 
@@ -98,15 +98,11 @@ public class Gimnasio {
         return clases;
     }
 
-    public Clase crearClase(int idSala) {
+    public Clase crearClase() {
         int idClase = -88;
-        for (Sala sala : salas) {
-            if (sala.getId() == idSala) {
-                idClase = sala.asignarId();
-            }
-        }
+        idClase = asignarIdClase();
         System.out.println("Indica el nombre de la clase: ");
-        String nombreClase = sc.nextLine();
+        String nombreClase = sc.nextLine().toUpperCase();
         System.out.println("Indica el numero máximo de alumnos de la clase: ");
         int capacidadClase = Integer.valueOf(sc.nextLine());
 
@@ -123,11 +119,11 @@ public class Gimnasio {
         return false;
     }
 
-    public Sala seleccionarSala() {//hay que ver como controlar que no me met una sala inexistente
+    public Sala seleccionarSala() {//hay que ver como controlar que no me meta una sala inexistente y si no me mete un numero
         int idSala;
         do {
             System.out.println("Introduce el id de la sala: ");
-            idSala=Integer.valueOf(sc.nextLine());
+            idSala = Integer.valueOf(sc.nextLine());
             for (Sala sala : salas) {
                 if (sala.getId() == idSala) {
                     return sala;
@@ -137,23 +133,69 @@ public class Gimnasio {
         } while (!existeSala(idSala));
         return null;//qque devuelvo si no?
     }
-    
-    public ArrayList<Integer> horasLibresSalaPorDia(Sala sala, String dia){
+
+    public ArrayList<Integer> horasLibresSalaPorDia(Sala sala, DiaSemana dia) {
         ArrayList<Horario> ocupados = sala.horariosOcupadosSalaPorDia(dia);
-        
+
         ArrayList<Integer> libres = new ArrayList<>();
         for (int i : horasApertura) {
             libres.add(i);
         }
         for (Horario horario : ocupados) {
-            for (int i=0; i<libres.size(); i++) {
-                if(libres.get(i) == horario.getHora()){
+            for (int i = 0; i < libres.size(); i++) {
+                if (libres.get(i) == horario.getHora()) {
                     libres.remove(libres.get(i));
                     i--;
                 }
             }
         }
         return libres;
+    }
+
+    public Sala identificarSala(Clase entrada) {
+        for (Sala sala : salas) {
+            if (sala.existeClase(entrada.getId())) {
+                return sala;
+            }
+        }
+        return null;//habria que controlar si esto devuelve null porque será que la clase no existe
+    }
+
+    public Clase seleccionarClaseSinSaberSala() {
+        int idClase;
+        do {
+            System.out.println("Introduce el id de la clase: ");
+            idClase = Integer.valueOf(sc.nextLine());
+            for (Sala sala : salas) {
+                for (Clase clase : sala.getClases()) {
+                    if (clase.getId() == idClase) {
+                        return clase;
+                    }
+                }
+                
+            } System.out.println("ID invalido...");
+
+        } while (true);
+    }
+
+    public int asignarIdClase() {
+        int idMayor = -1;
+        for (int i = 0; i < salas.size(); i++) {
+            if (salas.get(i).ultimoId() > idMayor) {
+                idMayor = salas.get(i).ultimoId();
+            }
+        }
+        return idMayor + 1;
+    }
+
+    public void reasignarIdClase() {
+        int id = 0;
+        for (Sala sala : salas) {
+            for (int i = 0; i < sala.getClases().size(); i++) {
+                sala.getClases().get(i).setId(id);
+                id++;
+            }
+        }
     }
 
 }

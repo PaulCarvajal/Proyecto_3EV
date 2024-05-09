@@ -13,15 +13,16 @@ public class Horario {
 
     private int id;
     private ArrayList<Cliente> inscritos = new ArrayList<>();
-    private String dia;
+    private DiaSemana dia;
     private int hora;
 
-    public Horario(int id, String dia, int hora) {
+    public Horario(int id, DiaSemana dia, int hora) {
         this.id = id;
         this.dia = dia;
         this.hora = hora;
     }
 
+    
     public ArrayList<Cliente> getInscritos() {
         return inscritos;
     }
@@ -30,7 +31,7 @@ public class Horario {
         return id;
     }
    
-    public String getDia() {
+    public DiaSemana getDia() {
         return dia;
     }
 
@@ -46,7 +47,7 @@ public class Horario {
         this.inscritos = inscritos;
     }
 
-    public void setDia(String dia) {
+    public void setDia(DiaSemana dia) {
         this.dia = dia;
     }
 
@@ -72,7 +73,7 @@ public class Horario {
     }
 
     public void imprimirInscritos() {
-        System.out.println(dia + hora +":00");
+        System.out.println(dia + " " + hora +":00");
         for (Cliente it : inscritos) {
             System.out.println(it.clienteToCsv());
         }

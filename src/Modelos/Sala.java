@@ -57,19 +57,13 @@ public class Sala {
         }
     }
 
-    public int asignarId() {
-        if(clases.isEmpty()){//si no existen clases el primer id será 0
+    public int ultimoId() {
+        if(clases.isEmpty()){//si no existen salas el primer id será 0
             return 0;
         }
-        return clases.get(clases.size()-1).getId()+1;//devuelve el id de la clase en ultima posición +1
+        return clases.get(clases.size()-1).getId();//devuelve el id de la clase en ultima posición 
     }
 
-    public ArrayList<Horario> horariosOcupadosPorDia(String dia){
-        ArrayList<Horario> salida = new ArrayList<>();
-        for (Clase clase : clases) {
-            
-        }
-    }
         
    /* public ArrayList<int> horasDisponiblesSala (int idSala, String dia){
         ArrayList<Horario> horasOcupadas;
@@ -104,7 +98,16 @@ public class Sala {
         return false;
     }
     
-    public ArrayList<Horario> horariosOcupadosSalaPorDia(String dia){
+    public Clase identificarClase(int idClase) {
+        for (Clase clase : clases) {
+            if (idClase == clase.getId()) {
+                return clase;
+            }
+        }
+        return null;//habria que controlar si esto devuelve null porque será que la clase no existe
+    }
+    
+    public ArrayList<Horario> horariosOcupadosSalaPorDia(DiaSemana dia){
         ArrayList<Horario> salida = new ArrayList<>();
         for (Clase clase : clases) {
             for (Horario horario : clase.horariosPorDia(dia)) {

@@ -115,20 +115,20 @@ public class Clase {
         return false;
     }
     
-    public ArrayList<Horario> horariosPorDia(String dia){
+    public ArrayList<Horario> horariosPorDia(DiaSemana dia){
         ArrayList<Horario> salida= new ArrayList<>();
         for (Horario horario : horario) {
-            if(horario.getDia().equalsIgnoreCase(dia)){
+            if(horario.getDia().name().equalsIgnoreCase(dia.name())){
                 salida.add(horario);
             }
         }
         return salida;
     }
-    public int asignarId() {
-        if(horario.isEmpty()){//si no existen clases el primer id será 0
+    public int asignarIdHorario() {
+        if(horario.isEmpty()){//si no existen horarios el primer id será 0
             return 0;
         }
-        return horario.get(horario.size()-1).getId()+1;//devuelve el id de la clase en ultima posición +1
+        return horario.get(horario.size()-1).getId()+1;//devuelve el id del horario en ultima posición +1
     }
 
 }
