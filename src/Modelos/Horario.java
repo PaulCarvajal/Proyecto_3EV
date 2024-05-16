@@ -92,6 +92,16 @@ public class Horario {
             return true;
         }
         return false;
-    }   
+    } 
+    
+
+    public static Horario crearHorarioLeido(String datos) {        
+        String[] aux = datos.split(",");
+        int id = Integer.valueOf(aux[0]);
+        DiaSemana dia = DiaSemana.valueOf(aux[1]);
+        int hora = Integer.valueOf(aux[2]);
+        Horario salida = new Horario(id, dia, hora);
+        return salida;
+    }
    
 }

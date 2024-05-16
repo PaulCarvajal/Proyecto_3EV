@@ -1,5 +1,7 @@
 package Modelos;
 
+import Operativa.OperativaComun;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -15,15 +17,16 @@ public class Gimnasio {
 
     private int id;
     private String nombre;
-    private ArrayList<Sala> salas;
+    private ArrayList<Sala> salas = new ArrayList<>();
     private final int[] horasApertura = {9, 10, 11, 12, 13};
+    private ArrayList<Cliente> clientes = new ArrayList<>();
+    private final Administrador admin = new Administrador();
 
-    private Scanner sc = new Scanner(System.in);
+    private static Scanner sc = new Scanner(System.in);
 
-    public Gimnasio(int id, String nombre, ArrayList<Sala> salas) {
+    public Gimnasio(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
-        this.salas = salas;
     }
 
     public int getId() {
@@ -42,6 +45,10 @@ public class Gimnasio {
         return horasApertura;
     }
 
+    public ArrayList<Cliente> getClientes() {
+        return clientes;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -52,6 +59,10 @@ public class Gimnasio {
 
     public void setSalas(ArrayList<Sala> salas) {
         this.salas = salas;
+    }
+
+    public void setClientes(ArrayList<Cliente> clientes) {
+        this.clientes = clientes;
     }
 
     public String gimnasioToCsv() {
@@ -67,22 +78,29 @@ public class Gimnasio {
 
     public void mostrarClases() {//ordenar con sort
         ArrayList<Clase> clases = recorrerClases();
-        System.out.println("Mostrando clases...");
-        for (Clase clase : clases) {
-            System.out.println(clase.claseToString());
+        if (clases.isEmpty()) {
+            System.out.println("No hay clases disponibles");
+        } else {
+            System.out.println("Mostrando clases...");
+            for (Clase clase : clases) {
+                System.out.println(clase.claseToString());
+
+            }
+        }
+
+    }
+
+    public void mostrarClientes() {
+        System.out.println("Mostrando clientes registrados...");
+        for (Cliente cliente : clientes) {
+            System.out.println(cliente.clienteToString());
         }
     }
 
-    public ArrayList<Horario> reservaClase() {
-        ArrayList<Horario> salida = new ArrayList<>();//esttaria bien inicializarlo a null??
-        System.out.println("Selecciona el id de la clase a reservar");
-        int idClase = Integer.valueOf(sc.nextLine());
-        for (Sala sala : salas) {//busco en que sala esta la clase indicada
-            salida = sala.horarioDisponibleClase(idClase);
-            if (!salida.isEmpty()) { //salida.size()!=0
-                return salida;
-            }
-        }
+    public ArrayList<Horario> horariosReservaClase() {
+        ArrayList<Horario> salida = new ArrayList<>();
+        Clase clase_a_reservar = seleccionarClaseSinSaberSala();
+        salida = clase_a_reservar.horarioDisponible();
         return salida;
     }
 
@@ -94,20 +112,30 @@ public class Gimnasio {
             for (Clase clase : aux) {
                 clases.add(clase);
             }
+            //clases.addAll(aux);
         }
         return clases;
     }
 
     public Clase crearClase() {
-        int idClase = -88;
-        idClase = asignarIdClase();
+
+        int idClase = asignarIdClase();
+        int capacidadClase;
         System.out.println("Indica el nombre de la clase: ");
         String nombreClase = sc.nextLine().toUpperCase();
-        System.out.println("Indica el numero máximo de alumnos de la clase: ");
-        int capacidadClase = Integer.valueOf(sc.nextLine());
+        do {
+            try {
+                System.out.println("Indica el numero máximo de alumnos de la clase: ");
+                capacidadClase = Integer.valueOf(sc.nextLine());
+                //break; //para que llegue al return
+                return new Clase(idClase, capacidadClase, nombreClase);//o lo devuelvo aqui
 
-        return new Clase(idClase, capacidadClase, nombreClase);
+            } catch (NumberFormatException e) {
+                System.out.println("Numero maximo de alumnos debe ser un valor numerico...");
+            }
+        } while (true);
 
+        //return new Clase(idClase, capacidadClase, nombreClase);
     }
 
     public boolean existeSala(int idSala) {
@@ -123,15 +151,20 @@ public class Gimnasio {
         int idSala;
         do {
             System.out.println("Introduce el id de la sala: ");
-            idSala = Integer.valueOf(sc.nextLine());
-            for (Sala sala : salas) {
-                if (sala.getId() == idSala) {
-                    return sala;
+            try {
+                idSala = Integer.valueOf(sc.nextLine());
+                for (Sala sala : salas) {
+                    if (sala.getId() == idSala) {
+                        return sala;
+                    }
                 }
+                System.out.println("ID invalido...");
+                System.out.println("La sala indicada no existe");
+            } catch (NumberFormatException e) {
+                System.out.println("ID invalido...");
+                System.out.println("El valor inrtoducido no es numérico");
             }
-            System.out.println("ID invalido...");
-        } while (!existeSala(idSala));
-        return null;//qque devuelvo si no?
+        } while (true);//bucle infinito, no parara hasta que llegue al return, es decir, hasta que se introduzca un id valido
     }
 
     public ArrayList<Integer> horasLibresSalaPorDia(Sala sala, DiaSemana dia) {
@@ -164,16 +197,43 @@ public class Gimnasio {
     public Clase seleccionarClaseSinSaberSala() {
         int idClase;
         do {
-            System.out.println("Introduce el id de la clase: ");
-            idClase = Integer.valueOf(sc.nextLine());
-            for (Sala sala : salas) {
-                for (Clase clase : sala.getClases()) {
-                    if (clase.getId() == idClase) {
-                        return clase;
+            try {
+                System.out.println("Introduce el id de la clase: ");
+                idClase = Integer.valueOf(sc.nextLine());
+                for (Sala sala : salas) {
+                    for (Clase clase : sala.getClases()) {
+                        if (clase.getId() == idClase) {
+                            return clase;
+                        }
                     }
                 }
-                
-            } System.out.println("ID invalido...");
+                System.out.println("ID invalido...");
+            } catch (NumberFormatException e) {
+                System.out.println("ID invalido...");
+                System.out.println("El valor inrtoducido no es numérico");
+            }
+
+        } while (true);
+    }
+
+    public Clase seleccionarClaseSinSaberSala(ArrayList<Clase> entrada) {
+        int idClase;
+        do {
+            try {
+                System.out.println("Introduce el id de la clase: ");
+                idClase = Integer.valueOf(sc.nextLine());
+                for (Sala sala : salas) {
+                    for (Clase clase : entrada) {
+                        if (clase.getId() == idClase) {
+                            return clase;
+                        }
+                    }
+                }
+                System.out.println("ID invalido...");
+            } catch (NumberFormatException e) {
+                System.out.println("ID invalido...");
+                System.out.println("El valor inrtoducido no es numérico");
+            }
 
         } while (true);
     }
@@ -196,6 +256,41 @@ public class Gimnasio {
                 id++;
             }
         }
+    }
+
+    public int asignarIdCliente() {
+        return clientes.size() + 1;
+    }
+
+    public void reasignarIdCliente(int id_borrado) throws SQLException {
+        int id = id_borrado; //recupero el id del cliente que se borrara
+
+        if (!clientes.isEmpty()) {
+            OperativaComun.actualizarIdCliente(clientes.get(clientes.size() - 1), id);
+            clientes.get(clientes.size() - 1).setId(id);//getlast()
+        }
+
+    }
+
+    public Cliente seleccionarCliente() {
+        int idCliente;
+        do {
+            try {
+                System.out.println("Introduce el id del cliente: ");
+                idCliente = Integer.valueOf(sc.nextLine());
+                for (Cliente cliente : clientes) {
+                    if (cliente.getId() == idCliente) {
+                        return cliente;
+                    }
+                }
+                System.out.println("ID invalido...");
+            } catch (NumberFormatException e) {
+                System.out.println("ID invalido...");
+                System.out.println("El valor inrtoducido no es numérico");
+            }
+
+        } while (true);
+
     }
 
 }

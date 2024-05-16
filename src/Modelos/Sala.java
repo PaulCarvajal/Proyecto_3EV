@@ -13,12 +13,11 @@ import java.util.Scanner;
 public class Sala {
 
     private int id;
-    private ArrayList<Clase> clases;
+    private ArrayList<Clase> clases = new ArrayList<>();
     Scanner sc = new Scanner(System.in);
 
-    public Sala(int id, ArrayList<Clase> clases) {
+    public Sala(int id) {
         this.id = id;
-        this.clases = clases;
     }
 
     public int getId() {
@@ -41,7 +40,7 @@ public class Sala {
         return id+"";
     }
 
-    public ArrayList<Horario> horarioDisponibleClase(int idClase) {
+    /*public ArrayList<Horario> horarioDisponibleClase(int idClase) {
         ArrayList<Horario> horario_aux = new ArrayList<>();
         for (Clase it : clases) {
             if (it.getId() == idClase) {
@@ -49,7 +48,7 @@ public class Sala {
             }
         }
         return horario_aux;
-    }
+    }*/
 
     public void mostrarClases() {
         for (Clase it : clases) {
@@ -64,15 +63,6 @@ public class Sala {
         return clases.get(clases.size()-1).getId();//devuelve el id de la clase en ultima posición 
     }
 
-        
-   /* public ArrayList<int> horasDisponiblesSala (int idSala, String dia){
-        ArrayList<Horario> horasOcupadas;
-        for (Sala sala : salas) {
-            if(sala.getId()==idSala){
-                
-            }
-        }
-    }*/
     
      public Clase seleccionarClase() {//hay que ver como controlar que no me met una sala inexistente
         int idClase;
