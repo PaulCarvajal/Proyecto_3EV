@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author Usuario
  */
-public class IO_Clientes {
+public class IO_CSV_Clientes {
 
     public static boolean escribir(File f, ArrayList<Cliente> clientes) throws IOException {
         boolean flag = true;

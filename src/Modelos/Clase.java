@@ -1,5 +1,6 @@
 package Modelos;
 
+import Operativa.OperativaComun;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -48,6 +49,10 @@ public class Clase {
         this.id = id;
     }
 
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+    
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -60,8 +65,6 @@ public class Clase {
         return id + "," + capacidad + "," + nombre;
     }
 
-    //sobre cargo o que hago?
-    
     public void mostrarHorario() {//muestra los disponibles
         for (Horario it : horarioDisponible()) {
             System.out.println(it.horarioToString());
@@ -103,31 +106,26 @@ public class Clase {
         int idHorario;
 
         do {
-            try {
                 System.out.println("Introduce el id del horario: ");
-                idHorario = Integer.valueOf(sc.nextLine());
+                idHorario = OperativaComun.asignarEntero();
                 for (Horario horario : entrada) {//recorree los horarios pasados por parametro
                     if (horario.getId() == idHorario) {
                         return horario;
                     }
                 }
                 System.out.println("ID invalido...");
-            } catch (NumberFormatException e) {
-                System.out.println("ID invalido...");
-                System.out.println("El valor inrtoducido no es numérico");
-            }
         } while (true);
 
     }
 
-    public boolean existeHorario(int idHorario) {
+    /*public boolean existeHorario(int idHorario) {
         for (Horario horario : horario) {
             if (idHorario == horario.getId()) {
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
     public ArrayList<Horario> horariosPorDia(DiaSemana dia) {
         ArrayList<Horario> salida = new ArrayList<>();

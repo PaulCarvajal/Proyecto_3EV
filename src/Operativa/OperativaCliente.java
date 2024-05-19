@@ -23,14 +23,9 @@ public class OperativaCliente {
 
     public static Scanner sc = new Scanner(System.in);
 
-    private static File f_gimnasio = new File("./Registro/clases.csv");
 
-    private static ArrayList<Sala> salas = new ArrayList<>();
 
     public static void menuCliente(Cliente entrada, Gimnasio g1) throws IOException {
-        //salas = IO_CSV_Gimnasio.leer(f_gimnasio, g1);
-
-        g1.getSalas().addAll(salas);
 
         String opcion = "";
 
@@ -45,7 +40,7 @@ public class OperativaCliente {
             opcion = sc.nextLine();
             switch (opcion) {
                 case "0":
-                    mostrarHorariosDisponibles(g1);
+                    OperativaComun.mostrarHorariosDisponibles(g1);
                     break;
                 case "1":
                     reserva(entrada, g1);
@@ -57,7 +52,6 @@ public class OperativaCliente {
                     misReservas(entrada, g1);
                     break;
                 case "4":
-                    //IO_CSV_Gimnasio.escribir(f_gimnasio, g1.getSalas());
                     break;
                 default:
                     System.out.println("¡Opción incorrecta!");
@@ -67,25 +61,7 @@ public class OperativaCliente {
         } while (!opcion.equals("4")); //Mientras seleccione un numero distinto de 4 seguir el bucle
     }
 
-    public static void mostrarHorariosDisponibles(Gimnasio g1) {
-        g1.mostrarClases(); //Muestra todas las clases existentes
 
-        ArrayList<Clase> clases = g1.recorrerClases(); //guarda en un array las clases del gimnasio(TODAS)
-
-        if (!clases.isEmpty()) {
-            Clase clase_seleccionada = g1.seleccionarClaseSinSaberSala();
-
-            if (clase_seleccionada.horarioDisponible().isEmpty()) {//clase.horario disponible devuelve el array de horario de esa clase en la que hay hueco
-                System.out.println("No quedan huecos en la clase de " + clase_seleccionada.getNombre());//si entra aqui es que de la clase indicada no quedan horarios disponibles
-            } else {//si hay algun horario disponible los muestro por pantalla
-                System.out.println("Horario disponible de " + clase_seleccionada.getNombre() + ":");
-                for (Horario horario : clase_seleccionada.horarioDisponible()) {
-                    System.out.println(horario.horarioToString());
-                }
-            }
-        }
-
-    }
 
     public static void reserva(Cliente entrada, Gimnasio g1) {
         g1.mostrarClases(); //Muestra todas las clases existentes
@@ -103,38 +79,29 @@ public class OperativaCliente {
     public static void eliminarReserva(Cliente entrada, Gimnasio g1) {
         ArrayList<Clase> misClases = misReservas(entrada, g1); //mis reservas devuelve un AL con las clases en las que hay al menos 1 reserva
         ArrayList<Horario> misHorarios = new ArrayList<>(); //creo un AL para guardar luego los horarios en los que estoy inscrito de la clase que indico
-
         Horario horario_a_borrar;
+        
         if (!misClases.isEmpty()) {//solo realizo esto si estoy matriculado en ALGUNA clase=>si no no me puede desmatricular de nada
+            
             Clase clase_a_borrar = g1.seleccionarClaseSinSaberSala(misClases); //selecciono una de las clases en la que tengo reserva
             misHorarios = clase_a_borrar.buscarMiHorario(entrada); //guardo los horarios de esa clase en los que estoy inscrito
 
             System.out.println("Para el horario a cancelar: ");
-            horario_a_borrar = clase_a_borrar.seleccionarHorario(misHorarios); //le paso el AL de horarios en los que estoy de esa clase para que seleccione el que hay que borrar
-            horario_a_borrar.getInscritos().remove(entrada); // borro al cliente del AL de inscritos del horario seleccionado
-
-            System.out.println("Reserva cancelada: " + clase_a_borrar.getNombre());
-
-            /*
-            do {
-                try { // lo podria hacer modificando el metodo seleccionarClaseSinSaberSala pero tendria que pasarle parametros y lo uso en varios lugares, que es mejor??? //de momento lo he sobrecargado
-                    System.out.println("Indica el id de la clase a cancelar: ");
-                    idClase = Integer.valueOf(sc.nextLine());
-                    for (Clase clase : misClases) {
-                        if (clase.getId() == idClase) {
-                            misHorarios = clase.buscarMiHorario(entrada);
-                            System.out.println("Para el horario a cancelar: ");
-                            horario_a_borrar = clase.seleccionarHorario(misHorarios); //le paso el AL de horarios en los que estoy de esa clase para que seleccione el que hay que borrar
-                            horario_a_borrar.getInscritos().remove(entrada); // borro al cliente del AL de inscritos del horario seleccionado
-                            System.out.println("Reserva cancelada: " + clase.getNombre());
-
-                        }
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("ID invalido...");
-                    System.out.println("El valor inrtoducido no es numérico");
+           /* System.out.println("Indica el id del horario");
+            int idHorario = OperativaComun.asignarEntero();
+            for (Horario horario : misHorarios) {
+                if(idHorario==horario.getId()){
+                    horario.eliminarCliente(entrada);
+                    horario.imprimirInscritos();
                 }
-            } while (idHorario == -88);*/
+            }*/
+            horario_a_borrar = clase_a_borrar.seleccionarHorario(misHorarios); //le paso el AL de horarios en los que estoy de esa clase para que seleccione el que hay que borrar
+            
+            horario_a_borrar.imprimirInscritos();
+            horario_a_borrar.eliminarCliente(entrada);
+            horario_a_borrar.imprimirInscritos();
+            
+            System.out.println("Reserva cancelada: " + clase_a_borrar.getNombre());
         }
     }
 
@@ -155,7 +122,7 @@ public class OperativaCliente {
         return misClases;
     }
 
-    public static void eliminarTodasLasReservas(Cliente entrada, Gimnasio g1) {
+    /*public static void eliminarTodasLasReservas(Cliente entrada, Gimnasio g1) {
         ArrayList<Clase> misClases = misReservas(entrada, g1); //mis reservas devuelve un AL con las clases en las que hay al menos 1 reserva
         ArrayList<Horario> misHorarios = new ArrayList<>(); //creo un AL para guardar luego los horarios en los que estoy inscrito de la clase que indico
         if (!misClases.isEmpty()) {//solo realizo esto si estoy matriculado en ALGUNA clase=>si no no me puede desmatricular de nada
@@ -167,6 +134,6 @@ public class OperativaCliente {
             }
             System.out.println("Reservas canceladas ");
         }
-    }
+    }*/
 
 }

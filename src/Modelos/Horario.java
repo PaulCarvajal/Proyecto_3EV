@@ -62,6 +62,11 @@ public class Horario {
             System.out.println("Ya estás inscrito en esta clase.");
         }
     }
+    
+    public void eliminarCliente(Cliente entrada){
+            inscritos.remove(entrada);
+            System.out.println("Reserva cancelada");        
+    }
 
     public boolean comprobarClienteInscrito(Cliente entrada) {
         for (Cliente it : inscritos) {
@@ -94,7 +99,6 @@ public class Horario {
         return false;
     } 
     
-
     public static Horario crearHorarioLeido(String datos) {        
         String[] aux = datos.split(",");
         int id = Integer.valueOf(aux[0]);

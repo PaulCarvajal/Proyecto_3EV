@@ -40,16 +40,6 @@ public class Sala {
         return id+"";
     }
 
-    /*public ArrayList<Horario> horarioDisponibleClase(int idClase) {
-        ArrayList<Horario> horario_aux = new ArrayList<>();
-        for (Clase it : clases) {
-            if (it.getId() == idClase) {
-                horario_aux = it.horarioDisponible();
-            }
-        }
-        return horario_aux;
-    }*/
-
     public void mostrarClases() {
         for (Clase it : clases) {
             System.out.println(it.claseToCsv());
@@ -88,14 +78,7 @@ public class Sala {
         return false;
     }
     
-    public Clase identificarClase(int idClase) {
-        for (Clase clase : clases) {
-            if (idClase == clase.getId()) {
-                return clase;
-            }
-        }
-        return null;//habria que controlar si esto devuelve null porque será que la clase no existe
-    }
+
     
     public ArrayList<Horario> horariosOcupadosSalaPorDia(DiaSemana dia){
         ArrayList<Horario> salida = new ArrayList<>();
