@@ -6,8 +6,9 @@ package Modelos;
 
 import java.util.Scanner;
 
-/**
- *
+/** *
+ * Enumeración que representa los días de la semana.
+ * 
  * @author adriana
  */
 public enum DiaSemana {

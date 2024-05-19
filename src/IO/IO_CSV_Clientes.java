@@ -13,11 +13,21 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- *
+ * La clase IO_CSV_Clientes proporciona métodos para leer y escribir datos de
+ * clientes en formato CSV.
+ * 
  * @author Usuario
  */
 public class IO_CSV_Clientes {
 
+    /**
+     * Escribe la lista de clientes en un archivo CSV.
+     * 
+     * @param f         El archivo en el que se guardarán los datos de los clientes.
+     * @param clientes  La lista de clientes a escribir en el archivo.
+     * @return          true si la operación fue exitosa, false en caso de error.
+     * @throws IOException Si ocurre un error de E/S durante la escritura.
+     */
     public static boolean escribir(File f, ArrayList<Cliente> clientes) throws IOException {
         boolean flag = true;
         FileWriter fw = null;//FileWriter es una clase para escribir
@@ -60,8 +70,14 @@ public class IO_CSV_Clientes {
         }
         System.out.println("Registro de clientes guardado");
         return flag;
-    }//revisar optimizacion del flag
+    }
 
+    /**
+     * Lee los datos de los clientes desde un archivo CSV.
+     * 
+     * @param f El archivo desde el cual se leerán los datos de los clientes.
+     * @return  Una lista de objetos Cliente leídos del archivo.
+     */
     public static ArrayList<Cliente> leer(File f) {
         ArrayList<Cliente> clientes_salida = new ArrayList<>();
         int cont_lineas = 0;

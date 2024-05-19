@@ -17,11 +17,21 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- *
+ ** La clase IO_CSV_Gimnasio proporciona métodos para leer y escribir datos de
+ * un gimnasio, incluyendo salas, clases, horarios y clientes, en formato CSV.
+ * 
  * @author Usuario
  */
 public class IO_CSV_Gimnasio {
-
+    /**
+     * Escribe la lista de salas, junto con sus clases, horarios y clientes, en
+     * un archivo CSV.
+     * 
+     * @param f     El archivo en el que se guardarán los datos del gimnasio.
+     * @param salas La lista de salas a escribir en el archivo.
+     * @return      true si la operación fue exitosa, false en caso de error.
+     * @throws IOException Si ocurre un error de E/S durante la escritura.
+     */
     public static boolean escribir(File f, ArrayList<Sala> salas) throws IOException {
         boolean flag = true;
         FileWriter fw = null;//FileWriter es una clase para escribir
@@ -82,6 +92,14 @@ public class IO_CSV_Gimnasio {
         return flag;
     }//revisar optimizacion del flag
 
+    /**
+     * Lee los datos del gimnasio desde un archivo CSV y los carga en el objeto
+     * Gimnasio proporcionado.
+     *
+     * @param f El archivo desde el cual se leerán los datos del gimnasio.
+     * @param g1 El objeto Gimnasio en el que se cargarán los datos leídos.
+     * @return Una lista de salas leídas del archivo.
+     */
     public static ArrayList<Sala> leer(File f, Gimnasio g1) {
         ArrayList<Sala> salas_salida = new ArrayList<>();
         int cont_lineas = 0;

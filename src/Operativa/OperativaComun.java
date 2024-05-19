@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
+ * Clase que contiene métodos comunes utilizados en la operativa del sistema.
+ * Incluye métodos para iniciar el programa, gestionar el inicio de sesión, y
+ * realizar acciones comunes como mostrar horarios disponibles.
  *
  * @author adriana
  */
@@ -49,6 +52,9 @@ public class OperativaComun {
     private static Sala s2;
     private static ArrayList<Cliente> clientes_actualizados = new ArrayList<>();
 
+    /**
+     * Inicia la instancia del gimnasio con salas predeterminadas.
+     */
     public static void iniciarGimnasio() {
         g1 = new Gimnasio(0, "AtlasGym");
 
@@ -59,6 +65,12 @@ public class OperativaComun {
         g1.getSalas().add(s2);
     }
 
+    /**
+     * Inicia el programa. Lee los archivos CSV, establece la conexión JDBC y
+     * gestiona el inicio de sesión.
+     *
+     * @throws IOException Si hay un error de E/S.
+     */
     public static void iniciarPrograma() throws IOException {
         try {
             // Establecer conexión JDBC
@@ -92,6 +104,15 @@ public class OperativaComun {
         }
     }
 
+    /**
+     * Gestiona el inicio de sesión. Muestra el menú de inicio de sesión y
+     * redirige al usuario según su rol.
+     *
+     * @param con Conexión a la base de datos.
+     * @param g1 Instancia del gimnasio.
+     * @throws SQLException Si hay un error de SQL.
+     * @throws IOException Si hay un error de E/S.
+     */
     public static void login(Connection con, Gimnasio g1) throws SQLException, IOException {
         String nickname;
         String contrasena;
@@ -105,7 +126,7 @@ public class OperativaComun {
             contrasena = sc.nextLine();
 
             if (loginAdmin(con, nickname, contrasena)) {
-                menuAdministrador(g1, con, f);
+                menuAdministrador(g1, con);
             } else if (loginCliente(con, nickname, contrasena)) {
                 Cliente cliente_logueado = identificarCliente(g1, con, nickname, contrasena);
                 menuCliente(cliente_logueado, g1);
@@ -116,6 +137,16 @@ public class OperativaComun {
 
     }
 
+    /**
+     * Realiza la autenticación de un administrador.
+     *
+     * @param con Conexión a la base de datos.
+     * @param nickname_entrada Nombre de usuario.
+     * @param contrasena_entrada Contraseña.
+     * @return true si el administrador se autentica con éxito, false de lo
+     * contrario.
+     * @throws SQLException Si hay un error de SQL.
+     */
     public static boolean loginAdmin(Connection con, String nickname_entrada, String contrasena_entrada) throws SQLException { //y donde llamas a esos metodos?
 
         String myQueryPrepared = "SELECT * FROM `usuarios` WHERE type='admin' AND nickname = ? AND password = ? ";
@@ -123,14 +154,19 @@ public class OperativaComun {
         PreparedStatement pstm = con.prepareStatement(myQueryPrepared);
         pstm.setString(1, nickname_entrada);
         pstm.setString(2, contrasena_entrada);
-        ResultSet rs = pstm.executeQuery(); //que saca esto si el usuario no existe?
-        /*if (rs.isBeforeFirst()) { //porque funciona aqui??? //rs.next() tb funciona
-            return true;
-        }
-        return false;*/
+        ResultSet rs = pstm.executeQuery();
         return rs.next();
     }
 
+    /**
+     * Realiza la autenticación de un cliente.
+     *
+     * @param con Conexión a la base de datos.
+     * @param nickname_entrada Nombre de usuario.
+     * @param contrasena_entrada Contraseña.
+     * @return true si el cliente se autentica con éxito, false de lo contrario.
+     * @throws SQLException Si hay un error de SQL.
+     */
     public static boolean loginCliente(Connection con, String nickname_entrada, String contrasena_entrada) throws SQLException {
         String myQueryPrepared = "SELECT * FROM usuarios WHERE nickname = ? AND password = ?";
 
@@ -144,6 +180,16 @@ public class OperativaComun {
         return false;
     }
 
+    /**
+     * Identifica al cliente autenticado.
+     *
+     * @param g1 Instancia del gimnasio.
+     * @param con Conexión a la base de datos.
+     * @param nickname_entrada Nombre de usuario.
+     * @param contrasena_entrada Contraseña.
+     * @return Cliente identificado.
+     * @throws SQLException Si hay un error de SQL.
+     */
     public static Cliente identificarCliente(Gimnasio g1, Connection con, String nickname_entrada, String contrasena_entrada) throws SQLException {
         String myQueryPrepared = "SELECT * FROM usuarios WHERE nickname = ? AND password = ?";
 
@@ -165,40 +211,10 @@ public class OperativaComun {
 
     }
 
-    /*
-    public static void insertarCliente(Cliente entrada) throws SQLException {
-        // Preparar la consulta SQL
-        System.out.println("Introduce un nombre de usuario: ");
-        String usuario = sc.nextLine();
-        System.out.println("Introduce una contraseña: ");
-        String contrasena = sc.nextLine();
-
-        String myQueryPrepared = "INSERT INTO `usuarios` (`id`,`nickname`,`password`, `type`) VALUES (?, ?, ?,'')";
-
-        PreparedStatement pstm = con.prepareStatement(myQueryPrepared);
-        pstm.setInt(1, entrada.getId());
-        pstm.setString(2, usuario);
-        pstm.setString(3, contrasena);
-
-        pstm.executeUpdate();
-    }
-
-    public static void actualizarIdCliente(Cliente entrada, int id) throws SQLException {
-        String myQueryPrepared = "UPDATE `usuarios` SET `id` = ? WHERE `id` = ?";
-        PreparedStatement pstm = con.prepareStatement(myQueryPrepared);
-        pstm.setInt(1, id);
-        pstm.setInt(2, entrada.getId());
-
-        pstm.executeUpdate();
-    }
-
-    public static void eliminarCliente(int idClienteBorrar) throws SQLException {
-        String myQueryPrepared = "DELETE FROM usuarios WHERE `id` = ?";
-        PreparedStatement pstm = con.prepareStatement(myQueryPrepared);
-        pstm.setInt(1, idClienteBorrar);
-
-        pstm.executeUpdate();
-    }
+    /**
+     * Muestra los horarios disponibles para las clases en el gimnasio.
+     *
+     * @param g1 Instancia del gimnasio.
      */
     public static void mostrarHorariosDisponibles(Gimnasio g1) {
         g1.mostrarClases(); //Muestra todas las clases existentes
@@ -236,6 +252,11 @@ public class OperativaComun {
         } while (continuar.equalsIgnoreCase("s"));
     }
 
+    /**
+     * Asigna un valor entero ingresado por el usuario.
+     *
+     * @return Valor entero asignado.
+     */
     public static int asignarEntero() {
         int salida;
         do {
